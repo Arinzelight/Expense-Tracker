@@ -8,14 +8,17 @@ const amount = document.getElementById('amount');
 
 
 
-const dummyTransactioins = [
-    { id: 1, text: 'Flower', amount: -20 },
-    { id: 2, text: 'Salary', amount: 400 },
-    { id: 3, text: 'Book', amount: -10 },
-    { id: 4, text: 'Camera', amount: 150 }
-];
+// const dummyTransactioins = [
+//     { id: 1, text: 'Flower', amount: -20 },
+//     { id: 2, text: 'Salary', amount: 400 },
+//     { id: 3, text: 'Book', amount: -10 },
+//     { id: 4, text: 'Camera', amount: 150 }
+// ];
 
-let transactions = dummyTransactioins;
+const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
+
+let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
+
 
 // Add Transaction
 function addTransaction(e){
@@ -35,6 +38,9 @@ function addTransaction(e){
         addTransactionDOM(transaction);
 
         updateValues();
+
+        updateLocalStorage();
+
         text.value = '';
         amount.value = '';
     }
@@ -42,7 +48,7 @@ function addTransaction(e){
 
 // Generate random ID
 function generateID() {
-    return Math.floor(Math.random() * 1000000);
+    return Math.floor(Math.random() * 10000000);
 }
 
 
@@ -72,7 +78,7 @@ function updateValues(){
 
    const income = amounts.filter(item => item  > 0).reduce((acc, item) => (acc += item), 0).toFixed(2);
 
-   const expense = amounts.filter(item => item < 0).reduce((acc, item) => (acc += item) * -1).toFixed(2);
+   const expense = (amounts.filter(item => item < 0).reduce((acc, item) => (acc += item), 0) * -1).toFixed(2);
 
     balance.innerText = `$${total}`;
     money_plus.innerText = `$${income}`;
@@ -82,13 +88,19 @@ function updateValues(){
 // Remove transaction by ID
 
 function removeTransaction(id) {
-    transactions = transactions.filter(transaction => transaction.id !== id)
+    transactions = transactions.filter(transaction => transaction.id !== id);
+
+    updateLocalStorage();
 
     init();
 }
   
-// Init app
+// Update local storage transactions
+function updateLocalStorage(){
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+}
 
+// Init app
 function init(){
     list.innerHTML = '';
     transactions.forEach(addTransactionDOM)
@@ -97,4 +109,4 @@ function init(){
 
 init();
 
-form.addEventListener('submit', addTransaction)
+form.addEventListener('submit', addTransaction);
