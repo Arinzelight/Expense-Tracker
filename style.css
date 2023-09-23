@@ -25,6 +25,10 @@ body{
     width: 350px;
 }
 
+#title{
+    color: #700031;
+}
+
 h1{
     letter-spacing: 1px;
     margin: 0;
